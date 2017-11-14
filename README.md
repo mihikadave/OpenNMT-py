@@ -160,19 +160,27 @@ perl tools/multi-bleu.perl data/multi30k/test2016.de.atok < multi30k.test2016.pr
 ```
 
 ### 5) Evaluate.
-
+Lowercase, Normalize, Tokenize
 ```bash
 perl ../preprocessing/lowercase.perl < multi30k.test2016.pred.atok > multi30k.test2016.pred.atok.lc
 
 perl ../preprocessing/normalize-punctuation.perl -l de < multi30k.test2016.pred.atok.lc > multi30k.test2016.pred.atok.lc.norm
 
 perl ../preprocessing/tokenizer.perl -l de < multi30k.test2016.pred.atok.lc.norm > multi30k.test2016.pred.atok.lc.norm.tok
+```
 
+Multeval
+```bash
 cd ../evaluating/multieval
 
 ./multeval.sh eval --refs ../../OpenNMT-py/multi30k.test2016.pred.atok.lc.norm.tok \
                    --hyps-baseline ../../OpenNMT-py/data/multi30k/test_2016_fixed.de.lc.norm.tok \
                    --meteor.language de
+```
+
+METEOR 1.5
+```bash
+java -Xmx2G -jar ../meteor-1.5/meteor-*.jar ../../OpenNMT-py/multi30k.test2016.pred.atok.lc.norm.tok ../../OpenNMT-py/data/multi30k/test_2016_fixed.de.lc.norm.tok -l de
 ```
 
 ## Pretrained Models
