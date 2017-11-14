@@ -148,13 +148,29 @@ python train.py -data data/multi30k.atok.low -save_model multi30k_brnn -gpuid 0 
 ### 3) Translate sentences.
 
 ```bash
-python translate.py -gpu 0 -model multi30k_model_*_e13.pt -src data/multi30k/test2016.en.atok -tgt data/multi30k/test2016.de.atok -replace_unk -verbose -output multi30k.test2016.pred.atok
+python translate.py -gpu 0 -model multi30k_brnn_*_e13.pt -src data/multi30k/test2016.en.atok -tgt data/multi30k/test2016.de.atok -replace_unk -verbose -output multi30k.test2016.pred.atok
 ```
 
 ### 4) Store translations.
 
 ```bash
 perl tools/multi-bleu.perl data/multi30k/test2016.de.atok < multi30k.test2016.pred.atok > translations.txt
+```
+
+### 5) Evaluate.
+
+```bash
+perl lowercase.perl < multi30k.test2016.pred.atok > multi30k.test2016.pred.atok.lc
+
+perl normalize-punctuation.perl -l de < multi30k.test2016.pred.atok.lc > multi30k.test2016.pred.atok.lc.norm
+
+perl tokenizer.perl -l de < multi30k.test2016.pred.atok.lc.norm > multi30k.test2016.pred.atok.lc.norm.tok
+
+cd ../evaluating/multeval
+
+./multeval.sh eval --refs ../OpenNMT-py/multi30k.test2016.pred.atok.lc.norm.tok \
+                   --hyps-baseline ../OpenNMT-py/test_2016_fixed.de.lc.norm.tok \
+                   --meteor.language de
 ```
 
 ## Pretrained Models
