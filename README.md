@@ -128,6 +128,8 @@ mkdir -p data/multi30k
 wget http://www.quest.dcs.shef.ac.uk/wmt17_files_mmt/mmt_task1_training.tar.gz &&  tar -xf mmt_task1_training.tar.gz -C data/multi30k && rm mmt_task1_training.tar.gz
 wget http://www.quest.dcs.shef.ac.uk/wmt17_files_mmt/mmt_task1_validation.tar.gz && tar -xf mmt_task1_validation.tar.gz -C data/multi30k && rm mmt_task1_validation.tar.gz
 wget http://www.quest.dcs.shef.ac.uk/wmt17_files_mmt/mmt_task1_test2016.tar.gz && tar -xf mmt_task1_test2016.tar.gz -C data/multi30k && rm mmt_task1_test2016.tar.gz
+
+wget http://www.quest.dcs.shef.ac.uk/wmt17_files_mmt/gold_translations_task1.tar.gz && tar -xf gold_translations_task1.tar.gz -C data/multi30k && rm gold_translations_task1.tar.gz
 ```
 
 ### 1) Preprocess the data.
@@ -160,16 +162,16 @@ perl tools/multi-bleu.perl data/multi30k/test2016.de.atok < multi30k.test2016.pr
 ### 5) Evaluate.
 
 ```bash
-perl lowercase.perl < multi30k.test2016.pred.atok > multi30k.test2016.pred.atok.lc
+perl ../preprocessing/lowercase.perl < multi30k.test2016.pred.atok > multi30k.test2016.pred.atok.lc
 
-perl normalize-punctuation.perl -l de < multi30k.test2016.pred.atok.lc > multi30k.test2016.pred.atok.lc.norm
+perl ../preprocessing/normalize-punctuation.perl -l de < multi30k.test2016.pred.atok.lc > multi30k.test2016.pred.atok.lc.norm
 
-perl tokenizer.perl -l de < multi30k.test2016.pred.atok.lc.norm > multi30k.test2016.pred.atok.lc.norm.tok
+perl ../preprocessing/tokenizer.perl -l de < multi30k.test2016.pred.atok.lc.norm > multi30k.test2016.pred.atok.lc.norm.tok
 
-cd ../evaluating/multeval
+cd ../evaluating/multieval
 
-./multeval.sh eval --refs ../OpenNMT-py/multi30k.test2016.pred.atok.lc.norm.tok \
-                   --hyps-baseline ../OpenNMT-py/test_2016_fixed.de.lc.norm.tok \
+./multeval.sh eval --refs ../../OpenNMT-py/multi30k.test2016.pred.atok.lc.norm.tok \
+                   --hyps-baseline ../../OpenNMT-py/data/multi30k/test_2016_fixed.de.lc.norm.tok \
                    --meteor.language de
 ```
 
