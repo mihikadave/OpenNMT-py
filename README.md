@@ -117,16 +117,16 @@ sed -i "s/$RealBin\/..\/share\/nonbreaking_prefixes//" tokenizer.perl
 wget https://raw.githubusercontent.com/moses-smt/mosesdecoder/master/scripts/generic/multi-bleu.perl
 ```
 
-## WMT'16 Multimodal Translation: Multi30k (de-en)
+## WMT'17 Multimodal Translation: Multi30k (de-en)
 
-An example of training for the WMT'16 Multimodal Translation task (http://www.statmt.org/wmt16/multimodal-task.html).
+An example of training for the WMT'17 Multimodal Translation task (http://www.statmt.org/wmt17/multimodal-task.html).
 
 ### 0) Download the data.
 
 ```bash
 mkdir -p data/multi30k
-wget http://www.quest.dcs.shef.ac.uk/wmt16_files_mmt/training.tar.gz &&  tar -xf training.tar.gz -C data/multi30k && rm training.tar.gz
-wget http://www.quest.dcs.shef.ac.uk/wmt16_files_mmt/validation.tar.gz && tar -xf validation.tar.gz -C data/multi30k && rm validation.tar.gz
+wget http://www.quest.dcs.shef.ac.uk/wmt17_files_mmt/mmt_task1_training.tar.gz &&  tar -xf mmt_task1_training.tar.gz -C data/multi30k && rm mmt_task1_training.tar.gz
+wget http://www.quest.dcs.shef.ac.uk/wmt17_files_mmt/mmt_task1_validation.tar.gz && tar -xf mmt_task1_validation.tar.gz -C data/multi30k && rm mmt_task1_validation.tar.gz
 wget http://www.quest.dcs.shef.ac.uk/wmt17_files_mmt/mmt_task1_test2016.tar.gz && tar -xf mmt_task1_test2016.tar.gz -C data/multi30k && rm mmt_task1_test2016.tar.gz
 ```
 
@@ -140,21 +140,21 @@ python preprocess.py -train_src data/multi30k/train.en.atok -train_tgt data/mult
 ```
 
 ### 2) Train the model.
-
+To train the model: BRNN with 2 layers, 500 units, LSTM
 ```bash
-python train.py -data data/multi30k.atok.low -save_model multi30k_model -gpuid 0
+python train.py -data data/multi30k.atok.low -save_model multi30k_brnn -gpuid 0 -encoder_type brnn
 ```
 
 ### 3) Translate sentences.
 
 ```bash
-python translate.py -gpu 0 -model multi30k_model_*_e13.pt -src data/multi30k/test.en.atok -tgt data/multi30k/test.de.atok -replace_unk -verbose -output multi30k.test.pred.atok
+python translate.py -gpu 0 -model multi30k_model_*_e13.pt -src data/multi30k/test2016.en.atok -tgt data/multi30k/test2016.de.atok -replace_unk -verbose -output multi30k.test2016.pred.atok
 ```
 
-### 4) Evaluate.
+### 4) Store translations.
 
 ```bash
-perl tools/multi-bleu.perl data/multi30k/test.de.atok < multi30k.test.pred.atok
+perl tools/multi-bleu.perl data/multi30k/test2016.de.atok < multi30k.test2016.pred.atok > translations.txt
 ```
 
 ## Pretrained Models
