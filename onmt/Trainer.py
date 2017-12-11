@@ -67,7 +67,8 @@ class Statistics(object):
 class Trainer(object):
     def __init__(self, model, train_iter, valid_iter,
                  train_loss, valid_loss, optim,
-                 trunc_size, shard_size):
+                 trunc_size, shard_size, train_img_iter=None,
+                 valid_img_iter=None):
         """
         Args:
             model: the seq2seq model.
@@ -83,6 +84,8 @@ class Trainer(object):
         self.model = model
         self.train_iter = train_iter
         self.valid_iter = valid_iter
+        self.train_img_iter = train_img_iter
+        self.valid_img_iter = valid_img_iter
         self.train_loss = train_loss
         self.valid_loss = valid_loss
         self.optim = optim
@@ -102,12 +105,19 @@ class Trainer(object):
             # Truncated BPTT
             trunc_size = self.trunc_size if self.trunc_size else target_size
 
+
             dec_state = None
             _, src_lengths = batch.src
 
             src = onmt.IO.make_features(batch, 'src')
             tgt_outer = onmt.IO.make_features(batch, 'tgt')
+            if(self.train_img_iter):
+                train_img = next(self.train_img_iter)
+            else:
+                train_img = None
+
             report_stats.n_src_words += src_lengths.sum()
+
 
             for j in range(0, target_size-1, trunc_size):
                 # 1. Create truncated target.
@@ -116,7 +126,7 @@ class Trainer(object):
                 # 2. F-prop all but generator.
                 self.model.zero_grad()
                 outputs, attns, dec_state = \
-                    self.model(src, tgt, src_lengths, dec_state)
+                    self.model(src, tgt, src_lengths, dec_state,enc_init=train_img)
 
                 # 3. Compute loss in shards for memory efficiency.
                 batch_stats = self.train_loss.sharded_compute_loss(
