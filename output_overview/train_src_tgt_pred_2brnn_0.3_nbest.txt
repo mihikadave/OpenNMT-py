@@ -1,0 +1,2 @@
+WARNING: -batch_size isn't supported currently, we set it to 1 for now!
+Loading model parameters.

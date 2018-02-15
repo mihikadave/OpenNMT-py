@@ -1,0 +1,11 @@
+Meteor version: 1.5
+
+Eval ID:        meteor-1.5-wo-de-no_norm-0.95_1.0_0.55_0.55-ex_st_pa-1.0_0.8_0.2
+
+Language:       German
+Format:         plaintext
+Task:           Ranking
+Modules:        exact stem paraphrase
+Weights:        1.0 0.8 0.2
+Parameters:     0.95 1.0 0.55 0.55
+

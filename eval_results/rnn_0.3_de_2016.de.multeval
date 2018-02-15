@@ -1,0 +1,3 @@
+n=1            BLEU (s_sel/s_opt/p)   METEOR (s_sel/s_opt/p) TER (s_sel/s_opt/p)    Length (s_sel/s_opt/p) 
+baseline       27.6 (0.7/*/-)         44.4 (0.6/*/-)         51.6 (0.7/*/-)         85.3 (0.6/*/-)         
+  *  Indicates no estimate of optimizer instability due to single optimizer run. Consider multiple optimizer runs.
